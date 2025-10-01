@@ -3,6 +3,8 @@ package com.photoselect.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import com.photoselect.service.PhotoService;
 
@@ -40,7 +42,11 @@ public class PhotoController {
             return ResponseEntity.notFound().build();
         }
         File file = photoService.getPhotoFile(files.get(index));
-        return ResponseEntity.ok(new FileSystemResource(file));
+        FileSystemResource resource = new FileSystemResource(file);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CACHE_CONTROL, "public, max-age=86400, must-revalidate"); // cache for 1 day
+        headers.add(HttpHeaders.ETAG, String.valueOf(file.lastModified()));
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
     }
 
     @PostMapping("/select/{index}")
