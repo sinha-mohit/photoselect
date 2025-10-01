@@ -15,7 +15,13 @@
         <div class="photo-frame">
             <img id="photo" src="" alt="Photo will appear here">
         </div>
-        <div class="status" id="status"></div>
+        <div class="status" id="status" style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+            <span id="statusText"></span>
+            <span class="jump-bar" style="font-family:inherit; font-size:inherit;">
+                <input type="number" id="jumpInput" min="1" placeholder="Photo #" class="jump-input" style="font-family:inherit; font-size:inherit; padding:4px 10px; width:90px;">
+                <button id="jumpBtn" class="jump-btn" style="font-family:inherit; font-size:inherit; padding:4px 16px; margin-left:6px;">Go</button>
+            </span>
+        </div>
     </div>
     <span class="hint bottom-hint">← Prev&nbsp;&nbsp;|&nbsp;&nbsp;Next →&nbsp;&nbsp;|&nbsp;&nbsp;Space = Select</span>
     <script type="module" src="./js/app.js"></script>

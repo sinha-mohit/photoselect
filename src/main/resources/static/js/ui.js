@@ -20,7 +20,12 @@ export function setPhotoSrc(src) {
 }
 
 export function updateStatus(text) {
-    statusElem.textContent = text;
+    const statusTextElem = document.getElementById("statusText");
+    if (statusTextElem) {
+        statusTextElem.textContent = text;
+    } else {
+        statusElem.textContent = text;
+    }
 }
 
 export function toggleDeleteBtn(show) {
