@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Wedding Photo Selector</title>
+    <style>
+        body {
+          text-align: center;
+          font-family: Arial, sans-serif;
+          background: #f9f9f9;
+          color: #333;
+        }
+        h1 {
+          margin-top: 20px;
+        }
+        #status, #counter {
+          margin: 10px;
+          font-size: 18px;
+        }
+        img {
+          max-width: 90%;
+          max-height: 80vh;
+          margin-top: 20px;
+          border-radius: 12px;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        .done {
+          font-size: 22px;
+          color: green;
+          margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+<h1>Wedding Photo Selector</h1>
+<p>Press <b>Shift</b> → Next | <b>Space</b> → Select & Copy</p>
+<p id="status">Loading photos...</p>
+<p id="counter">Selected: 0</p>
+<img id="photo" src="" alt="Photo will appear here">
+
+<div id="done" class="done" style="display:none;">All photos done ✅</div>
+
+<script>
+    let current = 0;
+    let total = 0;
+    let selected = 0;
+
+    async function init() {
+      total = await fetch("/api/count").then(r => r.json());
+      loadImage();
+    }
+
+    function loadImage() {
+      if (current < total) {
+        document.getElementById("photo").src = `/api/image/${current}?t=${Date.now()}`;
+        document.getElementById("status").innerText =
+          `Photo ${current+1} of ${total}`;
+        document.getElementById("counter").innerText =
+          `Selected: ${selected}`;
+      } else {
+        document.getElementById("status").style.display = "none";
+        document.getElementById("counter").style.display = "none";
+        document.getElementById("photo").style.display = "none";
+        document.getElementById("done").style.display = "block";
+      }
+    }
+
+    document.addEventListener("keydown", e => {
+      if (e.code === "ShiftLeft" || e.code === "ShiftRight") {
+        current++;
+        loadImage();
+      }
+      if (e.code === "Space") {
+        fetch(`/api/select/${current}`, { method: "POST" })
+          .then(() => {
+            selected++;
+            current++;
+            loadImage();
+          });
+      }
+    });
+
+    init();
+</script>
+</body>
+</html>
