@@ -212,4 +212,16 @@ public class PhotoService {
         }
         return deleted;
     }
+
+    public List<String> getCategoryPhotos(String categoryPath) {
+        File dir = new File(categoryPath);
+        if (!dir.exists() || !dir.isDirectory()) {
+            return Collections.emptyList();
+        }
+        String[] files = dir.list((d, name) -> name.toLowerCase().matches(".*\\.(jpg|jpeg|png)$"));
+        if (files == null) {
+            return Collections.emptyList();
+        }
+        return Arrays.stream(files).sorted().collect(Collectors.toList());
+    }
 }

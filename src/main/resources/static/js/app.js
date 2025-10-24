@@ -85,6 +85,10 @@ async function updateCategoryCounts() {
         const counts = await PhotoApi.getCategoryCounts();
         const countsDisplay = document.getElementById('categoryCounts');
         if (countsDisplay && counts) {
+            const total = (counts.haldi || 0) + (counts.mehendi || 0) + (counts.tilak || 0) + 
+                         (counts.jaimala || 0) + (counts.shaadi || 0) + (counts.vidai || 0) + 
+                         (counts.barat || 0) + (counts.matkor || 0);
+            
             countsDisplay.innerHTML = `
                 <div class="count-title">Category Counts:</div>
                 <div class="count-item">Haldi: ${counts.haldi || 0}</div>
@@ -95,6 +99,7 @@ async function updateCategoryCounts() {
                 <div class="count-item">Vidai: ${counts.vidai || 0}</div>
                 <div class="count-item">Barat: ${counts.barat || 0}</div>
                 <div class="count-item">Matkor: ${counts.matkor || 0}</div>
+                <div class="count-total">Total: ${total}</div>
             `;
         }
     } catch (error) {
@@ -154,6 +159,17 @@ async function init() {
     totalRef.value = await PhotoApi.getTotalPhotos();
     setupJump(indexRef, totalRef, loadPhoto);
     await updateCategoryCounts();
+    
+    // Check if there's a photo number in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const photoParam = urlParams.get('photo');
+    if (photoParam) {
+        const photoNum = parseInt(photoParam, 10);
+        if (!isNaN(photoNum) && photoNum >= 1 && photoNum <= totalRef.value) {
+            indexRef.value = photoNum - 1; // Convert to 0-based index
+        }
+    }
+    
     if (totalRef.value > 0) {
         loadPhoto();
     } else {

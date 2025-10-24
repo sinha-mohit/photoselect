@@ -208,4 +208,50 @@ public class PhotoController {
             default -> null;
         };
     }
+
+    @GetMapping("/categoryDetails")
+    public ResponseEntity<java.util.Map<String, java.util.List<PhotoInfo>>> getCategoryDetails() {
+        java.util.Map<String, java.util.List<PhotoInfo>> details = new java.util.LinkedHashMap<>();
+        details.put("haldi", getCategoryPhotosWithIndices(photoService.getHaldiDir()));
+        details.put("mehendi", getCategoryPhotosWithIndices(photoService.getMehendiDir()));
+        details.put("tilak", getCategoryPhotosWithIndices(photoService.getTilakDir()));
+        details.put("jaimala", getCategoryPhotosWithIndices(photoService.getJaimalaDir()));
+        details.put("shaadi", getCategoryPhotosWithIndices(photoService.getShaadiDir()));
+        details.put("vidai", getCategoryPhotosWithIndices(photoService.getVidaiDir()));
+        details.put("barat", getCategoryPhotosWithIndices(photoService.getBaratDir()));
+        details.put("matkor", getCategoryPhotosWithIndices(photoService.getMatkorDir()));
+        return ResponseEntity.ok(details);
+    }
+
+    private java.util.List<PhotoInfo> getCategoryPhotosWithIndices(String categoryPath) {
+        java.util.List<String> categoryPhotos = photoService.getCategoryPhotos(categoryPath);
+        java.util.List<PhotoInfo> photoInfoList = new java.util.ArrayList<>();
+        
+        for (String photoName : categoryPhotos) {
+            int index = files.indexOf(photoName);
+            if (index >= 0) {
+                photoInfoList.add(new PhotoInfo(photoName, index + 1)); // +1 for 1-based indexing
+            }
+        }
+        
+        return photoInfoList;
+    }
+
+    public static class PhotoInfo {
+        public String filename;
+        public int photoNumber;
+
+        public PhotoInfo(String filename, int photoNumber) {
+            this.filename = filename;
+            this.photoNumber = photoNumber;
+        }
+
+        public String getFilename() {
+            return filename;
+        }
+
+        public int getPhotoNumber() {
+            return photoNumber;
+        }
+    }
 }
